@@ -1,0 +1,37 @@
+h1 Edit #{user.full_name} 
+if (typeof error !== "undefined" && error)
+  p= error
+form(action='/users/' + user.user_name, method="post")#edit_user
+  input(type="hidden", name="_method", value="put")
+  p
+    label(for="user_name") User Name:
+    input(type="text", name="user_name", value="" + user.user_name)#user_name
+
+  p
+    label(for="full_name") Full Name:
+    input(type="text", name="full_name", value="" + user.full_name)#full_name
+
+  p
+    label(for="gh") GitHub User Name:
+    input(type="text", name="gh", value="" + user.gh)#gh
+
+  p
+    label(for="bb") BitBucket User Name:
+    input(type="text", name="bb", value="" + user.bb)#bb
+
+  p
+    label(for="password") Password:
+    input(type="password", name="password")#password
+
+  p
+    label(for="password2") Re-type Password:
+    input(type="password", name="password")#password2
+
+  input(type="submit", name="update_user")
+
+form(action='/users/' + user.user_name, method="post")#update_ghrepos
+  input(type="hidden", name="_method", value="put")
+  input(type="hidden", name="update_ghrepos", value="update_ghrepos")
+  input(type="hidden", name="user_name", value="#{user.user_name}")
+  input(type="hidden", name="gh", value="#{user.gh}")
+  input(type="submit", value="Update your GitHub repositories")

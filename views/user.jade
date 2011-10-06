@@ -1,0 +1,18 @@
+#user_heading
+  h1= user.full_name
+  - if (auth_user && auth_user === user.user_name)
+    a(href='/users/' + user.user_name + '/edit', title='Edit ' + user.full_name)[Edit]
+- if (user.ghRepos && user.ghRepos.length > 0)
+  h2 GitHub repos (username: #{user.gh})
+  ul
+    - each repo in user.ghRepos
+      li
+        a(href='/ghrepos/' + repo['name'], title='' + repo['name']) #{repo['name']}
+        \ - #{repo['description']}
+- if (user.bbRepos && user.bbRepos.length > 0)
+  h2 BitBucket repos (username: #{user.bb})
+  ul
+    - each repo in user.bbRepos
+      li #{repo[0]} - #{repo[1]}
+hr
+pre= dbg

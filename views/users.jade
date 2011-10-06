@@ -1,0 +1,8 @@
+h1 Users
+p This should show a list of all users
+ul#users
+  - each user in users
+    li: a(href="/users/#{user.user_name}", title="#{user.full_name}") #{user.full_name}
+hr
+pre= dbg
+p Auth? #{auth}

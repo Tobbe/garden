@@ -1,0 +1,27 @@
+h1 Create A New User
+form(action="/users", method="post")#new_user
+  p
+    label(for="user_name") User Name:
+    input(type="text", name="user_name")#user_name
+
+  p
+    label(for="full_name") Full Name:
+    input(type="text", name="full_name")#full_name
+
+  p
+    label(for="gh") GitHub User Name:
+    input(type="text", name="gh")#gh
+
+  p
+    label(for="bb") BitBucket User Name:
+    input(type="text", name="bb")#bb
+
+  p
+    label(for="password") Password:
+    input(type="password", name="password")#password
+
+  p
+    label(for="password2") Re-type Password:
+    input(type="password", name="password")#password2
+
+  input(type="submit")

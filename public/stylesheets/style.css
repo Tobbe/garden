@@ -1,0 +1,259 @@
+html, body, h1, h2, h3, h4 {
+	margin: 0;
+	padding: 0;
+}
+h1 img {
+	display: block;
+}
+img {
+	border: 0;
+}
+a {
+	color: #040;
+}
+a:hover {
+	color: #030;
+}
+.left {
+	float: left;
+}
+.right {
+	float: right;
+}
+.more {
+	text-align: right;
+}
+.clear {
+	clear: both;
+}
+
+body {
+	background: #658D05 url(/images/bg.jpg) repeat-x;
+	text-align: center;
+	font: 0.9em arial, sans-serif;
+	color: #040;
+	padding: 0 0 0 0;
+}
+
+/** layout **/
+#wrapper {
+	text-align: left;
+	margin: auto;
+	width: 1020px;
+	position: relative;
+}
+
+/** header **/
+#header {
+}
+
+#header h1, #header h2 {
+  font: 32px "Verdana", serif;
+  font-weight: normal;
+  /*position: absolute;
+  left: 0;
+  top: 35px;*/
+  color: #087;
+  padding: 20px 0 5px 0.7em;
+  margin: 0 ;
+}
+
+#header h1 {
+	display: none;
+}
+
+#nav-top {
+  color: #078;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+#nav-top ul {
+  margin: 0;
+  padding: 0 5px 5px 5px;
+  height: 31px;
+  border-color: white;
+  border-width: 0 3px 3px 3px;
+  border-style: solid;
+}
+
+#nav-top li {
+  float: left;
+  /*background: #C19855 url(images/tab_left.gif) no-repeat;*/
+  list-style: none;
+  text-align: center;
+  font: 18px "Times new roman", serif;
+  height: 31px;
+  line-height: 31px;
+  padding: 3px 5px;
+}
+
+#nav-top a {
+  color: #078;
+  text-decoration: none;
+}
+
+#nav-top a:hover {
+  color: #241D0A;
+}
+
+#nav {
+  padding-top: 370px;
+  background-image: url(/images/sh_garden.png); /* Font Candara 96 bold */
+  background-repeat: no-repeat;
+  background-color: white;
+  background-position: 10px 10px;
+}
+
+#nav ul {
+  margin: 0;
+  padding: 0;
+  padding-left: 25px;
+  height: 36px;
+  line-height: 36px;
+  background: bottom left url(/images/nav_lit.gif) repeat-x;
+}
+
+#nav li {
+  list-style: none;
+  float: left;
+  margin: 0;
+  padding: 0 10px;
+}
+
+#nav li.active_page {
+  background: bottom left url(/images/nav_drk.gif) repeat-x;
+}
+
+#nav a {
+  font: 16px "Times new roman", serif;
+  color: white;
+  text-decoration: none;
+}
+
+#nav a:hover {
+  color: #eee;
+}
+
+/** content **/
+
+#content {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#content h2 {
+  font: 1.7em "Times new roman", serif;
+  font-weight: normal;
+  border-left: 3px solid #040;
+  padding: 1px 1px 1px 8px;
+  margin-top: 22px;
+}
+
+#content p {
+  margin-left: 11px;
+  line-height: 1.4;
+}
+
+#content a {
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#content .left-col {
+  float: left;
+  width: 660px;
+}
+
+#content .right-col {
+  float: right;
+  width: 240px;
+}
+
+#content #welcome {
+  margin-right: 40px;
+}
+
+#content #welcome a {
+  text-decoration: underline;
+}
+
+#gallery {
+  margin-top: 14px;
+}
+#gallery .box {
+  float: left;
+  width: 119px;
+  padding: 0 23px 2.3em 23px;
+  margin-right: 1px;
+  background: #615331;
+  position: relative;
+}
+#gallery .box h3 {
+  text-align: center;
+  line-height: 23px;
+  font: 23px "Times new roman", serif;
+  color: #fff;
+  height: 23px;
+  margin-bottom: 20px;
+  background: top center url(/images/tab_drk.gif) no-repeat;
+}
+#gallery .box p {
+  margin: 1em 0;
+  padding: 0;
+  line-height: 1.4;
+}
+#gallery .box .more {
+  height: 18px;
+  line-height: 18px;
+  background: #978040 top left url(/images/moretab_left_drk.gif) no-repeat;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 3.2em;
+  padding-right: 4px;
+  margin-bottom: 0;
+}
+#gallery .box .more a {
+  color: #4C330D;
+}
+#gallery .box .more a:hover {
+  color: #291B06;
+}
+#gallery .box-lit {
+  background: #735220;
+}
+#gallery .box-lit h3 {
+  background: top center url(/images/tab_lit.gif) no-repeat;
+}
+#gallery .box-lit .more {
+  background: #B4A26D top left url(/images/moretab_left_lit.gif) no-repeat;
+}
+
+#content .right-col li, #content .right-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#content .right-col li {
+  border-left: 1px solid #040;
+  padding-left: 9px;
+  margin: 10px;
+}
+
+#content .right-col a {
+  font-weight: normal;
+}
+
+#footc {
+  height: 10px;
+}
+
+#footer {
+  background: #015605;
+  text-align: center;
+  color: #658D05;
+  padding: 14px;
+}

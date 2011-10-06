@@ -1,0 +1,9 @@
+h1 GitHub Repositories
+p This should show a list of all github repositories
+ul#ghrepos
+  - each repo in ghrepos
+    li
+      a(href="ghrepos/#{repo.name}", title="#{repo.name}") #{repo.name}
+      \ - #{repo.description}
+hr
+pre= dbg

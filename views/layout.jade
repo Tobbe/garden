@@ -1,0 +1,29 @@
+!!!
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    #wrapper
+      #header
+        h1 Softhosue Garden
+        h2 Where ideas grow
+        #nav-top
+          ul
+            li
+              a(href='/users/Tobbe', title='Go to your user page') Tobbe
+              //a(href='/users/' + auth_user, title='Go to your user page') #{auth_user}
+              | |
+            li
+              a(href='/logout', title='logout') Logout
+        #nav
+          ul
+            li.active_page: a(href='/', title='Home') Home
+            li: a(href='/users', title='Users') Users
+            li: a(href='/ghrepos', title='Repositories') Repositores
+            li: a(href='#', title='Proposals') Proposals
+      #content!= body
+      #footc.clear
+      #footer
+        | Softhouse AB takes no responsability for the projects showcased 
+        | here. They are made by Softhouse's emplyees in their own free time.
