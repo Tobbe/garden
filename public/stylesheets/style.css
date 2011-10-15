@@ -99,20 +99,20 @@ body {
 }
 
 #nav {
-  padding-top: 370px;
-  background-image: url(/images/sh_garden.png); /* Font Candara 96 bold */
-  background-repeat: no-repeat;
-  background-color: white;
-  background-position: 10px 10px;
+}
+
+#nav #logo {
+  border: 10px solid white;
 }
 
 #nav ul {
   margin: 0;
+  margin-top: 10px;
   padding: 0;
   padding-left: 25px;
-  height: 36px;
-  line-height: 36px;
-  background: bottom left url(/images/nav_lit.gif) repeat-x;
+  height: 40px;
+  line-height: 40px;
+  background: bottom left url(/images/nav_lit.gif);/* repeat-x;*/
 }
 
 #nav li {
@@ -120,20 +120,33 @@ body {
   float: left;
   margin: 0;
   padding: 0 10px;
+  height: 40px;
+  line-height: 40px;
 }
 
 #nav li.active_page {
-  background: bottom left url(/images/nav_drk.gif) repeat-x;
+  background: bottom left url(/images/nav_drk.gif);/* repeat-x;*/
+}
+
+#nav li.active_page a {
+  color: orange;
 }
 
 #nav a {
-  font: 16px "Times new roman", serif;
+  font-size: 20px;
   color: white;
   text-decoration: none;
+  padding-right: 5px;
+  height: 40px;
 }
 
 #nav a:hover {
   color: #eee;
+}
+
+#nav a img {
+  margin-bottom: -1px;
+  margin-right: 5px;
 }
 
 /** content **/

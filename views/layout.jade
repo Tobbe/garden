@@ -17,11 +17,24 @@ html
             li
               a(href='/logout', title='logout') Logout
         #nav
+          img#logo(src='/images/sh_garden.png', alt='Softhouse Garden logo')
           ul
-            li.active_page: a(href='/', title='Home') Home
-            li: a(href='/users', title='Users') Users
-            li: a(href='/ghrepos', title='Repositories') Repositores
-            li: a(href='#', title='Proposals') Proposals
+            li.active_page
+              a(href='/', title='Home')
+                img(src='/images/home.png', title='Home')
+                | Home
+            li
+              a(href='/users', title='Users')
+                img(src='/images/user.png', title='User')
+                | Users
+            li
+              a(href='/ghrepos', title='Repositories')
+                img(src='/images/repository.png', title='Repository')
+                | Repositores
+            li
+              a(href='#', title='Proposals')
+                img(src='/images/proposals.png', title='Proposals')
+                | Proposals
       #content!= body
       #footc.clear
       #footer
