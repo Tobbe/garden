@@ -112,10 +112,8 @@ app.post('/sessions', function(req, res) {
 	var r = redis.createClient();
 
 	r.hget('users', username, function(err, user) {
-		if (err) {
-			res.writeHead(403);
-			res.write('Sorry, you were not able to log in');
-			res.end(err);
+		if (err || !user) {
+			return res.redirect('/', 403);
 		}
 
 		user = JSON.parse(user);
