@@ -22,15 +22,15 @@ html
         #nav
           img#logo(src='/images/sh_garden.png', alt='Softhouse Garden logo')
           ul
-            li.active_page
+            li(class=active_page=='home'?'active_page':'')
               a(href='/', title='Home')
                 img(src='/images/home.png', title='Home')
                 | Home
-            li
+            li(class=active_page=='users'?'active_page':'')
               a(href='/users', title='Users')
                 img(src='/images/user.png', title='User')
                 | Users
-            li
+            li(class=active_page=='repositories'?'active_page':'')
               a(href='/ghrepos', title='Repositories')
                 img(src='/images/repository.png', title='Repository')
                 | Repositories

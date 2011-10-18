@@ -84,6 +84,22 @@ app.dynamicHelpers({
 	},
 	pretty: function(req, res) {
 		return true;
+	},
+	active_page: function(req, res) {
+		var url = urlparser.parse(req.url, true);
+		if (url.pathname.substring(1, 'users'.length + 1) == 'users') {
+			console.log('setting active_page to users');
+	        return 'users';
+        }
+
+		if (url.pathname.substring(1, 'ghrepos'.length + 1) == 'ghrepos') {
+			console.log('setting active_page to repositories');
+	        return 'repositories';
+        }
+
+		if (url.pathname == '/') {
+	        return 'home';
+        }
 	}
 })
 
