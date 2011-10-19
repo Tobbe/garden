@@ -244,19 +244,19 @@ body {
   background: #B4A26D top left url(/images/moretab_left_lit.gif) no-repeat;
 }
 
-#content .right-col li, #content .right-col ul {
+#content li, #content ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-#content .right-col li {
+#content li {
   border-left: 1px solid #040;
   padding-left: 9px;
   margin: 10px;
 }
 
-#content .right-col a {
+#content li a {
   font-weight: normal;
 }
 
