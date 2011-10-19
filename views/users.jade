@@ -1,5 +1,9 @@
 h2 Users
-p This should show a list of all users
+p
+  | These are all the Softhouse employees with projects listed here on
+  | Softhouse Garden. Click on a name to view all projects that user is
+  | involved with. You can also see their username at the different
+  | source hosting services that they use.
 ul#users
   - each user in users
     li: a(href="/users/#{user.user_name}", title="#{user.full_name}") #{user.full_name}
