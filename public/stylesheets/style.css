@@ -188,7 +188,7 @@ body {
   margin-right: 40px;
 }
 
-#content #welcome a {
+#content a {
   text-decoration: underline;
 }
 
@@ -258,6 +258,7 @@ body {
 
 #content li a {
   font-weight: normal;
+  text-decoration: none;
 }
 
 #footc {
