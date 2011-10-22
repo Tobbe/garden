@@ -35,3 +35,10 @@ form(action='/users/' + user.user_name, method="post")#update_ghrepos
   input(type="hidden", name="user_name", value="#{user.user_name}")
   input(type="hidden", name="gh", value="#{user.gh}")
   input(type="submit", value="Update your GitHub repositories")
+
+form(action='/users/' + user.user_name, method="post")#update_bbrepos
+  input(type="hidden", name="_method", value="put")
+  input(type="hidden", name="update_bbrepos", value="update_bbrepos")
+  input(type="hidden", name="user_name", value="#{user.user_name}")
+  input(type="hidden", name="bb", value="#{user.bb}")
+  input(type="submit", value="Update your BitBucket repositories")

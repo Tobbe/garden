@@ -1,6 +1,7 @@
 var util = require('util');
 var redis = require('redis');
 var GitHubRepoFetcher = require('../github.js').GitHubRepoFetcher;
+var BitBucketRepoFetcher = require('../bitbucket.js').BitBucketRepoFetcher;
 
 exports.index = function(req, res) {
 	var r = redis.createClient();
@@ -31,10 +32,13 @@ exports.show = function(req, res) {
 		user: req.user,
 	});
 
-	/*getReposFromGitHub(req.user.user_name, 'bagucode', function(err, repos) {
-		addReposToDb(req.user.user_name, repos, function() {
-			console.log('all repos added to db! All done!');
-		});
+	/*getReposFromBitBucket(req.user.user_name, 'haard', function(err, repos) {
+		console.log('exports.show: got all repos');
+		console.log('repo count: ' + repos.length);
+		console.log(repos);
+		//addReposToDb(req.user.user_name, repos, function() {
+		//	console.log('all repos added to db! All done!');
+		//});
 	});*/
 };
 
@@ -81,7 +85,19 @@ exports.update = function(req, res) {
 		}
 
 		getReposFromGitHub(req.body.user_name, req.body.gh, function(err, repos) {
-			addReposToDb(req.user.user_name, repos, function() {
+			addReposToDb(req.user.user_name, 'gh', repos, function() {
+				console.log('all repos added to db! All done!');
+				res.redirect('/users/' + req.user.user_name);
+			});
+		});
+	} else if (req.body.update_bbrepos) {
+		if (!req.body.bb) {
+			res.local('error', 'no bb name');
+			return exports.edit(req, res);
+		}
+
+		getReposFromBitBucket(req.body.user_name, req.body.bb, function(err, repos) {
+			addReposToDb(req.user.user_name, 'bb', repos, function() {
 				console.log('all repos added to db! All done!');
 				res.redirect('/users/' + req.user.user_name);
 			});
@@ -146,7 +162,41 @@ function getReposFromGitHub(garden_username, gh_username, callback) {
 	github.userRepos(gh_username);
 }
 
-function addReposToDb(username, repos, callback) {
+function getReposFromBitBucket(garden_username, bb_username, callback) {
+	var bitbucket = new BitBucketRepoFetcher();
+	bitbucket.on('basic_repos', function(repos) { });
+
+	bitbucket.on('fetching_readmes', function(readmesToFetch) {
+		getReposFromBitBucket.readmesToFetch = readmesToFetch;
+		console.log('Fetching ' + readmesToFetch + ' readmes');
+	});
+
+	bitbucket.on('repo_complete', function(repo) {
+		getReposFromBitBucket.completedRepos = getReposFromBitBucket.completedRepos + 1 || 1;
+		completed = getReposFromBitBucket.completedRepos;
+		totalRepos = getReposFromBitBucket.readmesToFetch;
+		if (totalRepos) {
+			console.log('Completed ' + completed + ' repo(s) out of ' + totalRepos);
+		}
+	});
+
+	bitbucket.on('end', function(repos) {
+		console.log('all repos fetched!');
+		getReposFromBitBucket.readmesToFetch = undefined;
+		getReposFromBitBucket.completedRepos = undefined;
+		repos.map(function(repo) {
+			repo.garden_user = garden_username;
+			return repo;
+		});
+		callback(null, repos);
+	});
+
+	console.log('Fetching BB repos for ' + bb_username);
+
+	bitbucket.userRepos(bb_username);
+}
+
+function addReposToDb(username, reposPrefix, repos, callback) {
 	if (!repos || repos.length === 0) {
 		console.log('added all repos to db');
 		return callback();
@@ -155,7 +205,7 @@ function addReposToDb(username, repos, callback) {
 	var r = redis.createClient();
 	var count = repos.length;
 	repos.forEach(function(repo) {
-		r.hset('repos:gh', repo.name, JSON.stringify(repo), function(err, result) {
+		r.hset('repos:' + reposPrefix, repo.name, JSON.stringify(repo), function(err, result) {
 			if (err) {
 				console.log('Error!');
 				return console.log(err);
@@ -164,7 +214,7 @@ function addReposToDb(username, repos, callback) {
 			count--;
 
 			if (count === 0) {
-				console.log('added all repos to repos:gh:');
+				console.log('added all repos to repos:' + reposPrefix);
 				addedRepos();
 			}
 		});
@@ -179,7 +229,7 @@ function addReposToDb(username, repos, callback) {
 	r.hget('users', username, function(err, result) {
 		var user = JSON.parse(result);
 
-		user.ghRepos = repoNames;
+		user[reposPrefix + 'Repos'] = repoNames;
 		console.log(user);
 
 		r.hset('users', username, JSON.stringify(user), function(err, result) {
@@ -209,135 +259,55 @@ exports.load = function(username, callback) {
 			return callback('No user with name \'' + username + '\' found in the database');
 		}
 
-		var fullRepoInfo = [];
 		var user = JSON.parse(reply);
-		user.ghRepos = user.ghRepos || [];
-		var reposToGo = user.ghRepos.length;
-		user.ghRepos.forEach(function(repo) {
-			r.hget('repos:gh', repo, function(err, reply) {
-				fullRepoInfo.push(JSON.parse(reply));
-				reposToGo--;
-				if (reposToGo === 0) {
-					user.ghRepos = fullRepoInfo;
-					console.log(user);
-					callback(null, user);
-				}
-			});
-		});
 
-		if (reposToGo === 0) {
-			callback(null, user);
+		user.ghRepos = user.ghRepos || [];
+		user.bbRepos = user.bbRepos || [];
+
+		if (user.ghRepos.length === 0) {
+			reposDone();
+		} else {
+			var fullGHRepoInfo = [];
+			var ghReposToGo = user.ghRepos.length;
+
+			user.ghRepos.forEach(function(repo) {
+				r.hget('repos:gh', repo, function(err, reply) {
+					fullGHRepoInfo.push(JSON.parse(reply));
+					ghReposToGo--;
+					if (ghReposToGo === 0) {
+						user.ghRepos = fullGHRepoInfo;
+						reposDone();
+					}
+				});
+			});
+		}
+
+		if (user.bbRepos.length === 0) {
+			reposDone();
+		} else {
+			var fullBBRepoInfo = [];
+			var bbReposToGo = user.bbRepos.length;
+
+			user.bbRepos.forEach(function(repo) {
+				r.hget('repos:bb', repo, function(err, reply) {
+					fullBBRepoInfo.push(JSON.parse(reply));
+					bbReposToGo--;
+					if (bbReposToGo === 0) {
+						user.bbRepos = fullBBRepoInfo;
+						reposDone();
+					}
+				});
+			});
+		}
+
+		function reposDone() {
+			reposDone.count = reposDone.count + 1 || 1;
+
+			if (reposDone.count == 2) {
+				console.log(user);
+				return callback(null, user);
+			}
 		}
 	});
 };
-
-function getReposFromBitBucket(username, callback) {
-	var https = require('https');
-
-	var options = {
-		host: 'api.bitbucket.org',
-		path: '/1.0/users/' + username
-	};
-
-	https.get(options, function(response) {
-		response.setEncoding('utf8');
-
-		var data = '';
-		response.on('data', function(chunk) {
-			data += chunk;
-		});
-
-		response.on('end', function() {
-			data = JSON.parse(data);
-			unifiedRepoInfoBB(username, data.repositories, callback);
-		});
-	});
-}
-
-function unifiedRepoInfoBB(username, repos, callback) {
-	var unifiedRepos = [];
-	var toGo = repos.length;
-
-	repos.forEach(function(repo) {
-		var unifiedRepo = {};
-		unifiedRepo.name = repo.name;
-		unifiedRepo.description = repo.description;
-
-		getBBReadme(username, repo.slug, function(err, readme) {
-			unifiedRepo.readme = readme;
-			unifiedRepos.push(unifiedRepo);
-			toGo--;
-
-			if (toGo === 0) {
-				callback(null, unifiedRepos);
-			}
-		});
-	});
-}
-
-function getBBReadme(user, repoSlug, callback) {
-	var https = require('https');
-
-	var options = {
-		host: 'api.bitbucket.org',
-		path: '/1.0/repositories/' + user + '/' + repoSlug + '/src/tip/'
-	};
-
-	https.get(options, function(response) {
-		response.setEncoding('utf8');
-
-		var data = '';
-		response.on('data', function(chunk) {
-			data += chunk;
-		});
-
-		response.on('end', function() {
-			data = JSON.parse(data);
-
-			var readmePath = getBBReadmePath(data.files);
-			if (readmePath) {
-				getBBReadmeContent(user, repoSlug, readmePath, function(err, content) {
-					if (err) {
-						return callback(err);
-					}
-
-					return callback(null, {name: readmePath, content: content});
-				});
-			} else {
-				callback(null, {name: '', content: ''});
-			}
-		});
-	});
-}
-
-function getBBReadmePath(files) {
-	for (var i = 0; i < files.length; ++i) {
-		if (files[i].path.match(/^readme\b/i)) {
-			return files[i].path;
-		}
-	}
-}
-
-function getBBReadmeContent(user, repoSlug, readmePath, callback) {
-	var https = require('https');
-
-	var options = {
-		host: 'api.bitbucket.org',
-		path: '/1.0/repositories/' + user + '/' + repoSlug + '/src/tip/' + readmePath
-	};
-
-	https.get(options, function(response) {
-		response.setEncoding('utf8');
-
-		var data = '';
-		response.on('data', function(chunk) {
-			data += chunk;
-		});
-
-		response.on('end', function() {
-			data = JSON.parse(data);
-			return callback(null, data.data);
-		});
-	});
-}
 

@@ -13,6 +13,8 @@
   h3 BitBucket repos (username: #{user.bb})
   ul
     - each repo in user.bbRepos
-      li #{repo[0]} - #{repo[1]}
+      li
+        a(href='/bbrepos/' + repo['name'], title='' + repo['name']) #{repo['name']}
+        \ - #{repo['description']}
 hr
 pre= dbg
