@@ -1,0 +1,27 @@
+h2 GitHub Repositories
+p
+  | Below you can see a list of all the repositories owned by Softhouse
+  | employees that are hosted on
+  a(href='http:\\github.com') GitHub
+  | . Clicking on a repository name will give you more information about
+  | that repository, like for example who its author is.
+ul#ghrepos
+  - each repo in ghrepos
+    li
+      a(href="ghrepos/#{repo.name}", title="#{repo.name}") #{repo.name}
+      \ - #{repo.description}
+
+h2 BitBucket Repositories
+p
+  | Below you can see a list of all the repositories owned by Softhouse
+  | employees that are hosted on
+  a(href='http:\\bitbucket.org') BitBucket
+  | . Clicking on a repository name will give you more information about
+  | that repository, like for example who its author is.
+ul#bbrepos
+  - each repo in bbrepos
+    li
+      a(href="bbrepos/#{repo.name}", title="#{repo.name}") #{repo.name}
+      \ - #{repo.description}
+hr
+pre= dbg

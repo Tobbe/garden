@@ -92,6 +92,16 @@ app.dynamicHelpers({
 	        return 'users';
         }
 
+		if (url.pathname.substring(1, 'repos'.length + 1) == 'repos') {
+			console.log('setting active_page to repositories');
+	        return 'repositories';
+        }
+
+		if (url.pathname.substring(1, 'bbrepos'.length + 1) == 'bbrepos') {
+			console.log('setting active_page to repositories');
+	        return 'repositories';
+        }
+
 		if (url.pathname.substring(1, 'ghrepos'.length + 1) == 'ghrepos') {
 			console.log('setting active_page to repositories');
 	        return 'repositories';
@@ -107,7 +117,9 @@ app.dynamicHelpers({
 // Routes
 
 app.resource('users', require('./resources/users.js'));
+app.resource('repos', require('./resources/repos.js'));
 app.resource('ghrepos', require('./resources/ghrepos.js'));
+app.resource('bbrepos', require('./resources/bbrepos.js'));
 
 app.get('/', function(req, res) {
     res.render('index', {

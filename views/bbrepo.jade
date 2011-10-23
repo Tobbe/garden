@@ -1,0 +1,10 @@
+div#repo_name
+  h2 #{repo.name} 
+  p by 
+    a(href='/users/' + repo.garden_user, title='Link to ' + repo.garden_user + '\'s user page') #{repo.garden_user}
+p= repo.description
+- if (repo.readme && repo.readme.content != '')
+  h2= repo.readme.name
+  pre= repo.readme.content
+hr
+pre= dbg
