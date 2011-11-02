@@ -43,8 +43,16 @@ exports.show = function(req, res) {
 };
 
 exports.create = function(req, res) {
-	if (!req.body.user_name || !req.body.password || !req.body.password[0] || !req.body.password[1]) {
-		return res.send('Missing user name or password');
+	if (!req.body) {
+		return res.send('Broken request', 500);
+	}
+
+	if (!req.body.full_name) {
+		return res.send('Missing full name');
+	}
+
+	if (!req.body.password || !req.body.password[0] || !req.body.password[1]) {
+		return res.send('Missing password');
 	}
 
 	if (req.body.password[0] != req.body.password[1]) {
@@ -54,20 +62,89 @@ exports.create = function(req, res) {
 	req.body.password = req.body.password[0];
 	req.body.salt = Date.now();
 	req.body.password_hash = req.body.salt + '_' + req.body.password;
-	
+
+	add_user(req, res);
+};
+
+var generateUsername = (function() {
+	var usernames = null;
+	var name = '';
+	var i = 0;
+	var number = 2;
+
+	return function(full_name) {
+		if (full_name != name) {
+			name = full_name;
+			i = 0;
+			number = 2;
+			usernames = generateUsernames(full_name);
+		}
+
+		var username = '';
+		if (i < usernames.length) {
+			username = usernames[i];
+			i++;
+		} else {
+			username = usernames[0] + number;
+			number++;
+		}
+
+		return username;
+	}
+})();
+
+function generateUsernames(full_name) {
+	var names = full_name.toLowerCase().split(' ');
+	var first = names[0];
+	var last = '';
+	var middle = '';
+
+	if (names.length > 1) {
+		last = names[names.length - 1];
+	}
+
+	if (names.length > 2) {
+		middle = names.slice(1, names.length - 1);
+		middle = middle.reduce(function(a, b) {
+			return a + b[0];
+		}, '');
+	}
+
+	if (middle && last) {
+		return [
+			first,
+			first + middle,
+			last,
+			first[0] + last,
+			first[0] + middle + last,
+			first.substr(0, 2) + last.substr(0, 2),
+			first.substr(0, 3) + last.substr(0, 3),
+			first + last,
+			first + middle + last];
+	} else if (last) {
+		return [first, last, first[0] + last, first.substr(0, 2) + last.substr(0, 2), first.substr(0, 3) + last.substr(0, 3), first + last];
+	} else {
+		return [first, first[0] + last, first.substr(0, 2) + last.substr(0, 2), first.substr(0, 3) + last.substr(0, 3), first + last];
+	}
+}
+
+function add_user(req, res) {
 	var r = redis.createClient();
+
+	req.body.user_name = generateUsername(req.body.full_name);
+
 	r.hsetnx('users', req.body.user_name, JSON.stringify(req.body), function(err, result) {
 		if (err) {
 			return res.send('Error adding user to redis: ' + util.inspect(err), 500);
 		}
 
 		if (result === 0) {
-			return res.send('Username already taken');
+			return add_user(req, res);
 		}
 
 		res.send('user created');
 	});
-};
+}
 
 exports.edit = function(req, res) {
 	res.render('edit_user', {
