@@ -126,10 +126,43 @@ app.get('/', function(req, res) {
 });
 
 app.get('/login', function(req, res) {
+	require('google-openid').create(app, 'http://' + req.headers.host, onGoogleAuthentication);
 	res.render('login_user', {
 		title: 'Enter Garden',
 	});
 });
+
+var onGoogleAuthentication = function(error, req, res, openid_result) {
+	if (error) {
+		res.writeHead(403);
+		res.end(error);
+	} else if (!openid_result || !openid_result.authenticated) {
+		res.writeHead(403);
+		res.end('Not authenticated');
+	} else if (!openid_result.email) {
+		res.writeHead(403);
+		res.end('Could not get your email address from google');
+	} else {
+		// User is authenticated with google
+
+		console.log('we\'re in');
+
+		var redis = require('redis');
+		var r = redis.createClient();
+		r.get('emailusermap:' + openid_result.email, function(err, user) {
+			if (err || !user) {
+				// User has not logged in before
+				return res.redirect('/users/new?google=google&email=' + openid_result.email);
+			}
+
+			var session_id = Math.random() * 100000000;
+			r.hset('sessions', user, session_id, function(e, r) {});
+			r.set('sessions:' + session_id, user, function(e, r) {});
+			res.cookie('session_id', session_id, {maxAge: 5*60*1000, path: '/'});
+			res.redirect('/');
+		});
+	}
+};
 
 app.post('/sessions', function(req, res) {
 	var attempted_password = req.body.password;

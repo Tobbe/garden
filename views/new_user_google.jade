@@ -2,7 +2,8 @@ h1 Create A New User
 form(action="/users", method="post")#new_user
   p
     label(for="email") Email address:
-    input(type="text", name="email")#email
+    input(type="text", disabled="disabled", name="disabled_email", value=email)#disabled_email
+    input(type="hidden", name="email", value=email)#email
 
   p
     label(for="full_name") Full Name:
@@ -16,12 +17,6 @@ form(action="/users", method="post")#new_user
     label(for="bb") BitBucket User Name:
     input(type="text", name="bb")#bb
 
-  p
-    label(for="password") Password:
-    input(type="password", name="password")#password
-
-  p
-    label(for="password2") Re-type Password:
-    input(type="password", name="password")#password2
+  input(type='hidden', name='google', value='google')#google
 
   input(type="submit")

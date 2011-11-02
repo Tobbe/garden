@@ -10,3 +10,10 @@ form(action="/sessions", method="post")#login_user
 
   p
     input(type="submit")
+
+  p
+    | Or login using your google account:
+    a(href='/googleopenid/authenticate', title='login with your google account')
+      | Sign in with your
+      img(src='http://www.google.com/favicon.ico')
+      | account

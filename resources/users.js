@@ -20,9 +20,16 @@ exports.index = function(req, res) {
 };
 
 exports.new = function(req, res) {
-	res.render('new_user', {
-		title: 'Garden - New User',
-	});
+	if (req.query['google'] == 'google') {
+		res.render('new_user_google', {
+			title: 'Garden - New User',
+			email: req.query['email']
+		});
+	} else {
+		res.render('new_user', {
+			title: 'Garden - New User',
+		});
+	}
 };
 
 exports.show = function(req, res) {
@@ -47,24 +54,25 @@ exports.create = function(req, res) {
 		return res.send('Broken request', 500);
 	}
 
+	if (!req.body.email) {
+		return res.send('Missing email address');
+	}
+
 	if (!req.body.full_name) {
 		return res.send('Missing full name');
 	}
 
-	if (!req.body.password || !req.body.password[0] || !req.body.password[1]) {
-		return res.send('Missing password');
+	if (req.body.google && req.body.google == 'google') {
+		create_google(req, res);
+	} else {
+		create_regular(req, res);
 	}
-
-	if (req.body.password[0] != req.body.password[1]) {
-		return res.send('Passwords didn\'t match');
-	}
-
-	req.body.password = req.body.password[0];
-	req.body.salt = Date.now();
-	req.body.password_hash = req.body.salt + '_' + req.body.password;
-
-	add_user(req, res);
 };
+
+function create_google(req, res) {
+	req.body.google = true;
+	add_user(req, res);
+}
 
 var generateUsername = (function() {
 	var usernames = null;
@@ -128,6 +136,22 @@ function generateUsernames(full_name) {
 	}
 }
 
+function create_regular(req, res) {
+	if (!req.body.password || !req.body.password[0] || !req.body.password[1]) {
+		return res.send('Missing password');
+	}
+
+	if (req.body.password[0] != req.body.password[1]) {
+		return res.send('Passwords didn\'t match');
+	}
+
+	req.body.password = req.body.password[0];
+	req.body.salt = Date.now();
+	req.body.password_hash = req.body.salt + '_' + req.body.password;
+
+	add_user(req, res);
+}
+
 function add_user(req, res) {
 	var r = redis.createClient();
 
@@ -142,7 +166,13 @@ function add_user(req, res) {
 			return add_user(req, res);
 		}
 
-		res.send('user created');
+		r.set('emailusermap:' + req.body.email, req.body.user_name, function(err, result) {
+			if (err) {
+				return res.send('Error adding user to emailusermap: ' + util.inspect(err), 500);
+			}
+
+			res.redirect('/users/' + req.body.user_name);
+		});
 	});
 }
 
