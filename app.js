@@ -14,6 +14,7 @@ var app = module.exports = express.createServer();
 app.configure(function() {
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
+	app.set('view options', { pretty: true })
 	app.use(express.favicon('favicon.ico'));
 	app.use(express.cookieParser());
 	app.use(express.session({secret: 'foobar'}));
@@ -81,9 +82,6 @@ app.dynamicHelpers({
 		} else {
 			return null;
 		}
-	},
-	pretty: function(req, res) {
-		return true;
 	},
 	active_page: function(req, res) {
 		var url = urlparser.parse(req.url, true);
